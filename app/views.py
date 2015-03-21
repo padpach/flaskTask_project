@@ -13,6 +13,7 @@ db = SQLAlchemy(app)
 # Importamos el Modelo
 from models import Task, User
 
+
 ####### Registro de usuario ######
 @app.route('/register/', methods=['GET', 'POST'])
 def register():
@@ -51,6 +52,7 @@ def login_required(test):
 @app.route('/logout/')
 def logout():
 	session.pop('logged_in', None)
+	session.pop('user_id', None)
 	flash("Haz cerrado tu session. Bye!")
 	return redirect(url_for('login'))
 
@@ -97,18 +99,24 @@ def tasks():
 	return render_template('tasks.html', form=AddTaskForm(request.form), open_tasks=open_tasks, closed_tasks=closed_tasks)
 
 
-# Nueva Tarea
+######### Nueva Tarea########
 @app.route('/add/', methods=['GET','POST'])
 @login_required
 def new_task():
+	import datetime
+	error = None
 	form = AddTaskForm(request.form)
 	if request.method == 'POST':
 		if form.validate_on_submit():
-			new_task = Task(form.name.data, form.due_date.data, form.priority.data, '1')
+			new_task = Task(form.name.data, form.due_date.data, form.priority.data, datetime.datetime.utcnow(), '1', session['user_id'])
 			db.session.add(new_task)
 			db.session.commit()
 			flash("Nuevo registro agregado con Exito! relax..")
-	return redirect(url_for('tasks'))
+			return redirect(url_for('tasks'))
+		else:
+			return render_template('tasks.html', form=form, error=error)
+	if request.method == 'GET':
+		return render_template('tasks.html', form=form)
 
 
 #Marcar Tarea como completa
