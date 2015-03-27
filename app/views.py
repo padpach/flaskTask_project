@@ -4,6 +4,7 @@ from flask import Flask, flash, redirect, render_template, request, session, url
 from functools import wraps
 from flask.ext.sqlalchemy import SQLAlchemy
 from forms import AddTaskForm, RegisterForm, LoginForm
+from sqlalchemy.exc import IntegrityError
 
 
 app = Flask(__name__)
@@ -26,10 +27,14 @@ def register():
 				form.email.data,
 				form.password.data,
 			)
-			db.session.add(new_user)
-			db.session.commit()
-			flash("Gracias por registrate, Por favor Accesa")
-			return redirect(url_for('login'))
+			try:
+				db.session.add(new_user)
+				db.session.commit()
+				flash("Gracias por registrate, Por favor Accesa")
+				return redirect(url_for('login'))
+			except IntegrityError:
+				error = 'Oh no! That username and/or email already exist, Please Try Again'
+				return render_template('register.html', form=form, error=error)
 		else:
 			return render_template('register.html', form=form, error=error)
 	if request.method == 'GET':
@@ -139,6 +144,14 @@ def delete_entry(task_id):
 	db.session.commit()
 	flash('Tarea borrada !! Nice, echate Otra!')
 	return redirect(url_for('tasks'))
+
+
+def flash_errors(form):
+	for field, errors in form.errors.items():
+		for error in errors:
+			flash(u"Error in the %s field - %s" % (getattr(form, field).label.text, error), 'error')
+
+
 
 
 
