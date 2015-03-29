@@ -3,5 +3,15 @@ from views import db
 from datetime import datetime
 from config import DATABASE_PATH
 from flask.ext.sqlalchemy import SQLAlchemy
+from models import User, Task
 
-db.execute("""ALTER TABLE tasks RENAME TO old_tasks""")
+class migrar():
+
+	def setUp(self):
+		app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/task'
+		return "Hola mundo"
+
+
+
+if __name__ == "__main__":
+	migrar()
