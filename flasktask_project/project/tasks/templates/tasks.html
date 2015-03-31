@@ -1,9 +1,12 @@
+<!-- /project/tasks/templates/tasks.html -->
+
 {% extends "template.html" %}
+
 {% block content %}
-  <h1>Welcome to FlaskTaskr</h1>
+  <h1>Bienvenido a FlaskTaskr</h1>
   <div class="add-task">
-    <div class="lead">Add a new task:</div>
-      <form action="{{ url_for('new_task') }}" method="post">
+    <div class="lead">Agrega una nueva Tarea:</div>
+      <form action="{{ url_for('tasks.new_task') }}" method="post">
         {{ form.csrf_token }}
         <p>
         {{ form.name(placeholder="name") }}
@@ -37,7 +40,7 @@
         </span>
         </p>
         <br>
-        <p><button class="btn btn-sm btn-success" type="submit">Submit</button></p>
+        <p><button class="btn btn-sm btn-success" type="submit">Enviar</button></p>
       </form>
   </div>
 <div class="entries">
@@ -48,12 +51,12 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>Task Name</th>
-        <th>Due Date</th>
-        <th>Posted Date</th>
-        <th>Priority</th>
-        <th>Posted By</th>
-        <th>Actions</th>
+        <th>Tarea</th>
+        <th>Termino</th>
+        <th>Agregada</th>
+        <th>Prioridad</th>
+        <th>Creado por</th>
+        <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -65,8 +68,12 @@
         <td>{{ o.priority }}</td>
         <td>{{ o.poster.name }}</td>
         <td>
-          <a href="{{ url_for('delete_entry', task_id = o.task_id) }}">Delete</a>  -
-          <a href="{{ url_for('complete', task_id = o.task_id) }}">Mark as Complete</a>
+          {% if o.poster.name == session.name or session.role == "admin" %}
+            <a href="{{ url_for('tasks.delete_entry', task_id = o.task_id) }}">Eliminar</a>  -
+            <a href="{{ url_for('tasks.complete', task_id = o.task_id) }}">Completar</a>
+          {% else %}
+            <span>N/A</span>
+          {% endif %}
         </td>
       </tr>
     {% endfor %}
@@ -76,17 +83,17 @@
 <br>
 <br>
 <div class="entries">
-  <div class="lead">Closed tasks</div>
+  <div class="lead">Tareas Completadas</div>
   <br>
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>Task Name</th>
-        <th>Due Date</th>
-        <th>Posted Date</th>
-        <th>Priority</th>
-        <th>Posted By</th>
-        <th>Actions</th>
+        <th>Tarea</th>
+        <th>Termino</th>
+        <th>Agregada</th>
+        <th>Prioridad</th>
+        <th>Creado por<</th>
+        <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -98,7 +105,11 @@
         <td>{{ c.priority }}</td>
         <td>{{ c.poster.name }}</td>
         <td>
-           <a href="{{ url_for('delete_entry', task_id = c.task_id) }}">Delete</a>
+        {% if c.poster.name == session.name or session.role == "admin" %}
+           <a href="{{ url_for('tasks.delete_entry', task_id = c.task_id) }}">Borrar</a>
+        {% else %}
+          <span>N/A</span>
+        {% endif %}
         </td>
       </tr>
     {% endfor %}

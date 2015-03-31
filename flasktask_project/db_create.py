@@ -1,8 +1,9 @@
 # db_create.py
+from project import db
 
 from config import DATABASE_PATH
-from views import db
-from models import Task
+
+from project.models import Task, User
 from datetime import date
 
 

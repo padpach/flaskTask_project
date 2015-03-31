@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Bienvenido a Flask To-do!!!</title>
+    <title>Bienvenido a FlaskTask!!</title>
     <!-- styles -->
     <link href="http://maxcdn.bootstrapcdn.com/bootswatch/3.2.0/yeti/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
@@ -26,11 +26,16 @@
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             {% if not session.logged_in %}
-              <li><a href="/register">Signup</a></li>
+              <li><a href="{{ url_for('users.register') }}">Registro</a></li>
             {% else %}
-              <li><a href="/logout">Signout</a></li>
+              <li><a href="{{ url_for('users.logout') }}">Signout</a></li>
             {% endif %}
           </ul>
+          {% if session.logged_in %}
+          <ul class="nav navbar-nav navbar-right">
+            <li><a>Welcome, {{username}}.</a></li>
+          </ul>
+          {% endif %}
         </div><!--/.nav-collapse -->
       </div>
     </div>
@@ -49,7 +54,7 @@
       </div>
       <div class="footer">
         <hr>
-        <p>&copy; <a href="http://www.realpython.com">Real Python</a></p>
+        <p>&copy; <a href="http://www.api4web.com">api4web</a></p>
       </div>
     </div><!-- /.container -->
     <!-- scripts -->
